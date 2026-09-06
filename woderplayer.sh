@@ -1,15 +1,31 @@
 #!/usr/bin/env bash
 
-# Clear screen
+# Screen clear
 clear
 
-# Header Text Input
-read -p "1. Enter Header Text (Default: WONDERPLAYER): " HEADER_NAME
+# Header Text
+read -p "1. Header Text Enter Karein (Default: WONDERPLAYER): " HEADER_NAME
 HEADER_NAME=${HEADER_NAME:-WONDERPLAYER}
+
+# Symbol Selection
+echo ""
+echo "Header Design Ke Liye Symbol Select Karein:"
+echo " 1) Hash Symbol (#)"
+echo " 2) Star Symbol (*)"
+echo " 3) Plus Symbol (+)"
+echo " 4) At Symbol (@)"
+read -p "Select Symbol (1-4, Default: 1): " SYM_CHOICE
+
+case $SYM_CHOICE in
+  2) SYMBOL="*" ;;
+  3) SYMBOL="+" ;;
+  4) SYMBOL="@" ;;
+  *) SYMBOL="#" ;;
+esac
 
 # Color Selection
 echo ""
-echo "Select Header Color:"
+echo "Select Color:"
 echo " 1) Red"
 echo " 2) Green"
 echo " 3) Yellow"
@@ -18,22 +34,32 @@ echo " 5) Magenta"
 read -p "Select Color (1-5, Default: 4): " COLOR_CHOICE
 
 case $COLOR_CHOICE in
-  1) H_COLOR_CODE="\033[1;31m" ;; # Bright Red
-  2) H_COLOR_CODE="\033[1;32m" ;; # Bright Green
-  3) H_COLOR_CODE="\033[1;33m" ;; # Bright Yellow
-  5) H_COLOR_CODE="\033[1;35m" ;; # Bright Magenta
-  *) H_COLOR_CODE="\033[1;36m" ;; # Bright Cyan
+  1) COLOR_CODE="\033[1;31m" ;; # Bright Red
+  2) COLOR_CODE="\033[1;32m" ;; # Bright Green
+  3) COLOR_CODE="\033[1;33m" ;; # Bright Yellow
+  5) COLOR_CODE="\033[1;35m" ;; # Bright Magenta
+  *) COLOR_CODE="\033[1;36m" ;; # Bright Cyan
 esac
 
-# Size / Font Selection
-echo ""
-echo "Select Header Size / Style:"
-echo " 1) Big / Large Font"
-echo " 2) Standard / Medium Font"
-echo " 3) Small / Compact Font (Fits all mobile screens)"
-read -p "Select Size (1-3, Default: 3): " SIZE_CHOICE
+# Necessary package install
+pkg update -y && pkg install toilet -y
 
-case $SIZE_CHOICE in
+BASHRC="$HOME/.bashrc"
+
+# Safe append to ~/.bashrc using cat << 'EOF'
+cat << EOF >> "$BASHRC"
+
+# --- WONDERPLAYER INTERFACE START ---
+clear
+echo -e "${COLOR_CODE}"
+toilet -f term -F border -w \$(tput cols) "$HEADER_NAME" | sed "s/#/$SYMBOL/g"
+echo -e "\033[0m"
+# --- WONDERPLAYER INTERFACE END ---
+EOF
+
+echo ""
+echo -e "\033[1;32m[✔] Setup Successfully Attached!${RESET}"
+echo "Termux restart karein ya 'source ~/.bashrc' type karein."
   1) FONT_TYPE="big" ;;
   2) FONT_TYPE="standard" ;;
   *) FONT_TYPE="small" ;;
