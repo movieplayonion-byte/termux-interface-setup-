@@ -1,39 +1,82 @@
 #!/usr/bin/env bash
 
-# Color Definitions (Bright colors for black background)
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[1;36m'
-MAGENTA='\033[1;35m'
-RESET='\033[0m'
-
+# Clear screen
 clear
-echo -e "${CYAN}===========================================${RESET}"
-echo -e "${YELLOW}       WONDERPLAYER TERMUX SETUP${RESET}"
-echo -e "${CYAN}===========================================${RESET}"
-echo ""
 
-# Termux packages install
-echo -e "${GREEN}[*] Updating & installing required packages...${RESET}"
-pkg update -y && pkg upgrade -y
-pkg install figlet toilet mpv ncurses-utils -y
-
-# Configuration inputs
-echo ""
-echo -e "${CYAN}--- Header Customization ---${RESET}"
-read -p "$(echo -e ${YELLOW}"[1] Header Text (Default: WONDERPLAYER): "${RESET})" HEADER_NAME
+# Header Text Input
+read -p "1. Enter Header Text (Default: WONDERPLAYER): " HEADER_NAME
 HEADER_NAME=${HEADER_NAME:-WONDERPLAYER}
 
+# Color Selection
 echo ""
-echo -e "${CYAN}Choose Color for Header:${RESET}"
-echo -e " 1) Red\n 2) Green\n 3) Yellow\n 4) Cyan\n 5) Magenta"
-read -p "$(echo -e ${YELLOW}"[2] Select Color (1-5, Default: 4): "${RESET})" COLOR_CHOICE
+echo "Select Header Color:"
+echo " 1) Red"
+echo " 2) Green"
+echo " 3) Yellow"
+echo " 4) Cyan"
+echo " 5) Magenta"
+read -p "Select Color (1-5, Default: 4): " COLOR_CHOICE
 
 case $COLOR_CHOICE in
-  1) HEADER_COLOR="RED" ;;
-  2) HEADER_COLOR="GREEN" ;;
-  3) HEADER_COLOR="YELLOW" ;;
+  1) H_COLOR_CODE="\033[1;31m" ;; # Bright Red
+  2) H_COLOR_CODE="\033[1;32m" ;; # Bright Green
+  3) H_COLOR_CODE="\033[1;33m" ;; # Bright Yellow
+  5) H_COLOR_CODE="\033[1;35m" ;; # Bright Magenta
+  *) H_COLOR_CODE="\033[1;36m" ;; # Bright Cyan
+esac
+
+# Size / Font Selection
+echo ""
+echo "Select Header Size / Style:"
+echo " 1) Big / Large Font"
+echo " 2) Standard / Medium Font"
+echo " 3) Small / Compact Font (Fits all mobile screens)"
+read -p "Select Size (1-3, Default: 3): " SIZE_CHOICE
+
+case $SIZE_CHOICE in
+  1) FONT_TYPE="big" ;;
+  2) FONT_TYPE="standard" ;;
+  *) FONT_TYPE="small" ;;
+esac
+
+# Command Prompt Color
+echo ""
+echo "Select Command Prompt Color:"
+echo " 1) Red"
+echo " 2) Green"
+echo " 3) Yellow"
+echo " 4) Cyan"
+echo " 5) Magenta"
+read -p "Select Prompt Color (1-5, Default: 2): " CMD_CHOICE
+
+case $CMD_CHOICE in
+  1) CMD_COLOR_CODE="\033[1;31m" ;;
+  3) CMD_COLOR_CODE="\033[1;33m" ;;
+  4) CMD_COLOR_CODE="\033[1;36m" ;;
+  5) CMD_COLOR_CODE="\033[1;35m" ;;
+  *) CMD_COLOR_CODE="\033[1;32m" ;;
+esac
+
+# Packages Installation
+pkg update -y && pkg install figlet -y
+
+BASHRC="$HOME/.bashrc"
+
+# Appending to ~/.bashrc without modifying existing shortcuts
+cat << EOF >> "$BASHRC"
+
+# --- WONDERPLAYER INTERFACE SETUP START ---
+clear
+echo -e "${H_COLOR_CODE}"
+figlet -f $FONT_TYPE "$HEADER_NAME"
+echo -e "\033[0m"
+export PS1="${CMD_COLOR_CODE}[$HEADER_NAME@termux \W]\$ \033[0m"
+# --- WONDERPLAYER INTERFACE SETUP END ---
+EOF
+
+echo ""
+echo -e "\033[1;32m[✔] Setup Successfully Completed!\033[0m"
+echo "Termux restart karein ya 'source ~/.bashrc' run karein."
   5) HEADER_COLOR="MAGENTA" ;;
   *) HEADER_COLOR="CYAN" ;;
 esac
